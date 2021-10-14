@@ -5,6 +5,7 @@ import (
 	"dbUtils/internal"
 	"flag"
 	"log"
+	"sync"
 )
 
 var (
@@ -19,6 +20,8 @@ var (
 func main() {
 	flag.Parse()
 
+	wg := sync.WaitGroup{}
+
 	cfg := configs.DatabaseConfiguration{
 		*server, uint16(*port), *user, *password, *database,
 	}
@@ -26,6 +29,10 @@ func main() {
 	appName := "Database Utils"
 	log.Printf("Привет, %s!", appName)
 
-	internal.RunApp(cfg.CreateConnStr())
+	wg.Add(1)
+	internal.RunApp(&wg, cfg.CreateConnStr())
+
+	wg.Wait()
+	log.Printf("ALL DONE")
 
 }

@@ -4,9 +4,11 @@ import (
 	"dbUtils/internal/db"
 	"dbUtils/internal/domain"
 	"log"
+	"sync"
 )
 
-func RunApp(connString string) {
+func RunApp(wg *sync.WaitGroup, connString string) {
+	defer wg.Done()
 
 	conn := db.MakeNewConnector(connString)
 	database := db.OpenDB(conn)
